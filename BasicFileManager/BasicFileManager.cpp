@@ -78,16 +78,6 @@ void deleteDir() {
     }
 }
 
-/*void getFileSize() {
-    std::string path, name;
-    dirPath(path, name);
-
-    fs::path filePath = fs::path(path) / name;
-
-    std::cout << "Getting size of: " << filePath;
-
-}*/
-
 int main() {
 	
 	bool loop = true;
