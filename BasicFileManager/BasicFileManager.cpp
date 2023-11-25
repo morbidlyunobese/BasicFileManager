@@ -2,30 +2,33 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <cmath>
 #include <filesystem>
+#include <fstream>
 
 // https://en.cppreference.com/w/cpp/filesystem 
 // file system reference docs i used ^
 
 namespace fs = std::filesystem;
 
-void choices() {
+void userChoices() {
 	std::cout << "1. Create Dir.\n";
     std::cout << "2. Iterate Dir.\n";
-	std::cout << "3. Exit.\n";
+	std::cout << "3. Delete Dir.\n";
+    std::cout << "4. Exit.\n";
 }
 
-void directory(std::string& path, std::string& name) {
-    std::cout << "Enter path: ";
+void filePath(std::string& path, std::string& name) {
+    std::cout << "Enter root: ";
     std::getline(std::cin, path);
-    std::cout << "Enter DIR name: ";
+    std::cout << "Enter path: ";
     std::getline(std::cin, name);
 }
 
 void createDir() {
     std::string path, name;
 
-    directory(path, name);
+    filePath(path, name);
     fs::path dirPath = fs::path(path) / name;
 
     std::cout << "Created a folder in " << dirPath << "\n";
@@ -36,7 +39,7 @@ void createDir() {
 void iterateDir() {
     std::string path, name;
 
-    directory(path, name);
+    filePath(path, name);
     fs::path dirPath = fs::path(path) / name;
 
     for (auto const& dir_entry : fs::directory_iterator{ dirPath }) {
@@ -45,8 +48,45 @@ void iterateDir() {
 }
 
 void deleteDir() {
-    
+    std::string path, name;
+    char choice;
+
+    filePath(path, name);
+    fs::path dirPath = fs::path(path) / name;
+
+    std::cout << "Are you sure you want to delete path: " << dirPath << "?\n (Y or N): ";
+    std::cin >> choice;
+
+    switch (choice) {
+        case 'Y':
+            try {
+                std::uintmax_t n{ fs::remove_all(dirPath) };
+                std::cout << "Path " << dirPath << " removed successfully!\n";
+            }
+            catch (const std::exception& error) {
+                std::cerr << "Error caught: " << error.what() << std::endl;
+            }
+            break;
+
+        case 'N':
+            std::cout << "Cancelled deletion.";
+            break;
+
+        default:
+            std::cout << "Invalid char, please select Y or N.";
+            break;
+    }
 }
+
+/*void getFileSize() {
+    std::string path, name;
+    dirPath(path, name);
+
+    fs::path filePath = fs::path(path) / name;
+
+    std::cout << "Getting size of: " << filePath;
+
+}*/
 
 int main() {
 	
@@ -54,7 +94,7 @@ int main() {
 	while (loop) {
 		int choice;
 
-        choices();
+        userChoices();
 
 		std::cout << "Enter choice: ";
 		std::cin >> choice;
@@ -70,6 +110,10 @@ int main() {
             break;
 
         case 3:
+            deleteDir();
+            break;
+
+        case 4:
             std::cout << "Exit Successful!";
             loop = false;
             break;
